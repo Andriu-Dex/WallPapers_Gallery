@@ -1,0 +1,21 @@
+# Node
+node_modules/
+.env
+package-lock.json
+
+# React
+build/
+.DS_Store
+
+# Java
+*.class
+*.jar
+*.war
+*.log
+*.iml
+out/
+
+# General
+.vscode/
+.idea/
+*.log

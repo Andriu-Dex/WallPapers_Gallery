@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Paper, Typography } from "@mui/material";
-
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { registerUser } from "../../redux/slices/authSlice";
 
 const Register = () => {
@@ -23,12 +22,12 @@ const Register = () => {
     dispatch(registerUser(form))
       .unwrap()
       .then(() => {
-        console.log("Registro exitoso");
-        // Aquí puedes redirigir o limpiar el formulario si quieres
+        console.log("✅ Registro exitoso");
       })
       .catch((err) => {
-        console.error("Error al registrarse:", err);
-        setError(err.message || "Error al registrarse");
+        console.error("❌ Error al registrarse:", err);
+        const msg = typeof err === "string" ? err : err?.message;
+        setError(msg || "Error al registrarse");
       });
   };
 

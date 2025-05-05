@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Paper, Typography } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginUser } from "../../redux/slices/authSlice";
 
 const Login = () => {
@@ -12,7 +12,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!form.name || !form.email || !form.password) {
+    if (!form.email || !form.password) {
       setError("Todos los campos son obligatorios");
       return;
     }
@@ -22,11 +22,12 @@ const Login = () => {
     dispatch(loginUser(form))
       .unwrap()
       .then(() => {
-        console.log("Inicio de sesión exitoso");
+        console.log("✅ Inicio de sesión exitoso");
       })
       .catch((err) => {
-        console.error("Error al iniciar sesión:", err);
-        setError(err.message || "Error al iniciar sesión");
+        console.error("❌ Error al iniciar sesión:", err);
+        const msg = typeof err === "string" ? err : err?.message;
+        setError(msg || "Error al iniciar sesión");
       });
   };
 

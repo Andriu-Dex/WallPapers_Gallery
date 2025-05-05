@@ -22,7 +22,7 @@ const Navbar = () => {
           color="inherit"
           sx={{ textDecoration: "none" }}
         >
-          SocialMemories
+          Full WallPapers
         </Typography>
 
         {user ? (

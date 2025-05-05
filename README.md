@@ -150,7 +150,7 @@ Este proyecto utiliza **Git Flow** como modelo de ramificación. Las ramas princ
 
 ---
 
-## Desarrolado por
+## Desarrolado por:
 
 - **Andriu Dex**
 

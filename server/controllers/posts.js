@@ -155,15 +155,65 @@ export const likePost = async (req, res) => {
   }
 
   const alreadyLiked = post.likedBy.includes(req.userId);
+  const alreadyDisliked = post.dislikedBy.includes(req.userId);
 
   if (alreadyLiked) {
-    return res
-      .status(400)
-      .json({ message: "Ya diste like a esta publicación" });
+    // Si ya dio like, lo quitamos
+    post.likeCount -= 1;
+    post.likedBy = post.likedBy.filter((userId) => userId !== req.userId);
+  } else {
+    // Si no ha dado like, lo agregamos
+    post.likeCount += 1;
+    post.likedBy.push(req.userId);
+
+    // Si el usuario ya dio dislike, lo quitamos
+    if (alreadyDisliked) {
+      post.dislikeCount -= 1;
+      post.dislikedBy = post.dislikedBy.filter(
+        (userId) => userId !== req.userId
+      );
+    }
   }
 
-  post.likeCount += 1;
-  post.likedBy.push(req.userId);
+  const updatedPost = await post.save();
+  res.json(updatedPost);
+};
+
+// Dar "dislike" a una publicación (sin permitir duplicados)
+export const dislikePost = async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.userId) {
+    return res.status(401).json({ message: "No autenticado" });
+  }
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(404).send(`No existe publicación con ID: ${id}`);
+  }
+
+  const post = await Post.findById(id);
+  if (!post) {
+    return res.status(404).send("Publicación no encontrada");
+  }
+
+  const alreadyDisliked = post.dislikedBy.includes(req.userId);
+  const alreadyLiked = post.likedBy.includes(req.userId);
+
+  if (alreadyDisliked) {
+    // Si ya dio dislike, lo quitamos
+    post.dislikeCount -= 1;
+    post.dislikedBy = post.dislikedBy.filter((userId) => userId !== req.userId);
+  } else {
+    // Si no ha dado dislike, lo agregamos
+    post.dislikeCount += 1;
+    post.dislikedBy.push(req.userId);
+
+    // Si el usuario ya dio like, lo quitamos
+    if (alreadyLiked) {
+      post.likeCount -= 1;
+      post.likedBy = post.likedBy.filter((userId) => userId !== req.userId);
+    }
+  }
 
   const updatedPost = await post.save();
   res.json(updatedPost);

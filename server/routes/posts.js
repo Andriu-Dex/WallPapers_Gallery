@@ -5,6 +5,7 @@ import {
   updatePost,
   deletePost,
   likePost,
+  dislikePost, // Importamos el controlador de dislike
 } from "../controllers/posts.js"; // Se importan todos los controladores
 
 import auth from "../middleware/auth.js"; // Se importa el middleware de autenticación
@@ -25,5 +26,8 @@ router.delete("/:id", auth, deletePost);
 
 // Dar "me gusta" a una publicación (usuario autenticado, sin duplicados)
 router.patch("/:id/likePost", auth, likePost);
+
+// Dar "no me gusta" a una publicación (usuario autenticado, sin duplicados)
+router.patch("/:id/dislikePost", auth, dislikePost);
 
 export default router;

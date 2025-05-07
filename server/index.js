@@ -16,7 +16,8 @@ const app = express();
 
 // Middleware
 app.use(express.json({ limit: "30mb" }));
-app.use(cors());
+// app.use(cors());
+app.use(cors({ origin: "*" })); // Esto permitirá que cualquier origen acceda al servidor
 
 app.use("/posts", postRoutes);
 

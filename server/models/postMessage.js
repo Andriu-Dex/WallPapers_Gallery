@@ -38,6 +38,18 @@ const postSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+
+    // Contador de "no me gusta"
+    dislikeCount: {
+      type: Number,
+      default: 0,
+    },
+
+    // IDs de usuarios que dieron dislike
+    dislikedBy: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true, // Crea automáticamente createdAt y updatedAt

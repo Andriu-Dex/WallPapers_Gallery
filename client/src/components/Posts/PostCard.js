@@ -26,6 +26,8 @@ import { useState } from "react";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
+import ThumbDownIcon from "@mui/icons-material/ThumbDown"; // Importamos el ícono de dislike
+import { dislikePost } from "../../redux/slices/postsSlice"; // Importamos la acción de dislike
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ const PostCard = ({ post }) => {
   const isAuthor = user?.result?._id === post.creator;
 
   const alreadyLiked = post.likedBy.includes(user?.result?._id);
+  const alreadyDisliked = post.dislikedBy.includes(user?.result?._id); // Verificamos si el usuario ya dio dislike
 
   // Función para confirmar y ejecutar la eliminación
   const handleDeleteConfirmed = async () => {
@@ -91,45 +94,56 @@ const PostCard = ({ post }) => {
         </CardContent>
 
         {/* Acciones visibles solo para el autor */}
-        {isAuthor && (
-          //Version
-          <CardActions>
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-              <Tooltip title={alreadyLiked ? "Ya te gusta" : "Me gusta"}>
-                <IconButton
-                  color={alreadyLiked ? "primary" : "default"}
-                  onClick={() => dispatch(likePost(post._id))}
-                  disabled={!user}
-                >
-                  <ThumbUpIcon />
-                </IconButton>
-              </Tooltip>
-              <Typography variant="body2">{post.likeCount}</Typography>
+        <CardActions>
+          <Box sx={{ display: "flex", gap: 1, alignItems: "center" }}>
+            <Tooltip title={alreadyLiked ? "Quitar me gusta" : "Me gusta"}>
+              <IconButton
+                color={alreadyLiked ? "primary" : "default"}
+                onClick={() => dispatch(likePost(post._id))}
+                disabled={!user} // El botón solo estará habilitado si el usuario ha iniciado sesión
+              >
+                <ThumbUpIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="body2">{post.likeCount}</Typography>
 
-              {isAuthor && (
-                <>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<EditIcon />}
-                    onClick={handleEdit}
-                  >
-                    Editar
-                  </Button>
-                  <Button
-                    size="small"
-                    color="error"
-                    variant="outlined"
-                    startIcon={<DeleteIcon />}
-                    onClick={() => setOpenDialog(true)}
-                  >
-                    Eliminar
-                  </Button>
-                </>
-              )}
-            </Box>
-          </CardActions>
-        )}
+            {/* Botón de Dislike */}
+            <Tooltip
+              title={alreadyDisliked ? "Quitar no me gusta" : "No me gusta"}
+            >
+              <IconButton
+                color={alreadyDisliked ? "error" : "default"} // Cambiamos el color a rojo (error) si ya dio dislike
+                onClick={() => dispatch(dislikePost(post._id))} // Acción para dislike
+                disabled={!user} // El botón solo estará habilitado si el usuario ha iniciado sesión
+              >
+                <ThumbDownIcon />
+              </IconButton>
+            </Tooltip>
+            <Typography variant="body2">{post.dislikeCount}</Typography>
+
+            {isAuthor && (
+              <>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<EditIcon />}
+                  onClick={handleEdit}
+                >
+                  Editar
+                </Button>
+                <Button
+                  size="small"
+                  color="error"
+                  variant="outlined"
+                  startIcon={<DeleteIcon />}
+                  onClick={() => setOpenDialog(true)}
+                >
+                  Eliminar
+                </Button>
+              </>
+            )}
+          </Box>
+        </CardActions>
       </Card>
 
       {/* Diálogo de confirmación de eliminación */}

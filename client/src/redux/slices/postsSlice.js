@@ -63,6 +63,19 @@ export const likePost = createAsyncThunk("posts/like", async (id, thunkAPI) => {
   }
 });
 
+// DISLIKE
+export const dislikePost = createAsyncThunk(
+  "posts/dislike",
+  async (id, thunkAPI) => {
+    try {
+      const res = await api.dislikePost(id); // Llamada a la API para dislike
+      return res.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue("Error al dar dislike");
+    }
+  }
+);
+
 // SLICE
 const postsSlice = createSlice({
   name: "posts",
@@ -161,6 +174,22 @@ const postsSlice = createSlice({
         );
       })
       .addCase(likePost.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
+      // DISLIKE
+      .addCase(dislikePost.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(dislikePost.fulfilled, (state, action) => {
+        state.loading = false;
+        state.posts = state.posts.map((post) =>
+          post._id === action.payload._id ? action.payload : post
+        );
+      })
+      .addCase(dislikePost.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
